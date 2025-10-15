@@ -16,7 +16,7 @@ class AIAdvisorScreen extends ConsumerStatefulWidget {
 class _AIAdvisorScreenState extends ConsumerState<AIAdvisorScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  final List<ChatMessage> _messages = [];
+  final List<ChatMessage> _messages = []; 
   bool _isTyping = false;
   
   // Replace with your actual Gemini API key

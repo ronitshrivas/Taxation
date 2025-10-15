@@ -43,7 +43,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
   }
 
   void _calculate() {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState != null && !_formKey.currentState!.validate()) return;
 
     final grossIncome = double.tryParse(_incomeController.text.replaceAll(',', '')) ?? 0;
     final pf = double.tryParse(_pfController.text.replaceAll(',', '')) ?? 0;

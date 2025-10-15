@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tax/data/datasources/local/hive_database.dart';
 import 'package:tax/presentation/screens/auth/login_screen.dart';
 import 'package:tax/presentation/screens/dashboard/dashboard_screen.dart';
 import 'core/theme/app_theme.dart';
@@ -15,6 +16,8 @@ void main() async {
   // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
+  await HiveDatabase().init();  // This sets up Hive and opens boxes on the instance
+
   // Set preferred orientations (portrait only)
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -22,7 +25,7 @@ void main() async {
   ]);
 
   // Initialize Hive database
-  await _initHive();
+  //await _initHive();
 
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
@@ -43,7 +46,7 @@ void main() async {
 }
 
 /// Initialize Hive database
-Future<void> _initHive() async {
+Future<void> init() async {
   // Get application documents directory
   final appDocumentDir = await getApplicationDocumentsDirectory();
   
@@ -164,9 +167,11 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Navigate based on authentication state
     // For now, just show a placeholder
-    Navigator.of(context).pushReplacement(
+   Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => LoginScreen(),
+        builder: (context) => hasUser
+            ? const DashboardScreen()
+            : const LoginScreen(),
       ),
     );
   }

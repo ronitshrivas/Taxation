@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:tax/core/utilis/formatters.dart';
 import 'package:tax/presentation/screens/expenses/add_expenses_screen.dart';
+import 'package:tax/presentation/screens/receipt/generate_report_screen.dart';
+import 'package:tax/presentation/screens/receipt/receipt_scanner_screen.dart';
+import 'package:tax/presentation/screens/tax/tax_calculator_screen.dart';
+import 'package:tax/presentation/screens/transactions_screen.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../providers/app_providers.dart';
@@ -24,7 +28,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: _selectedIndex == 0 ? _buildDashboard() : _buildPlaceholder(),
+      body: _selectedIndex == 0 ? _buildDashboard() : _buildContent(),
       bottomNavigationBar: _buildBottomNavigationBar(),
       floatingActionButton: _selectedIndex == 0 ? _buildFAB() : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -196,6 +200,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 icon: Icons.arrow_downward,
                 color: AppColors.income,
                 subtitle: '${summary.incomeCount} transactions',
+                height: MediaQuery.of(context).size.height * 0.18, // Responsive height
+        width: MediaQuery.of(context).size.width * 0.42,
               ),
               SummaryCard(
                 title: AppStrings.totalExpenses,
@@ -203,6 +209,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 icon: Icons.arrow_upward,
                 color: AppColors.expense,
                 subtitle: '${summary.expenseCount} transactions',
+                height: MediaQuery.of(context).size.height * 0.18, // Responsive height
+        width: MediaQuery.of(context).size.width * 0.42,
               ),
               SummaryCard(
                 title: 'Net Income',
@@ -210,6 +218,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 icon: Icons.account_balance_wallet,
                 color: summary.netIncome >= 0 ? AppColors.success : AppColors.error,
                 subtitle: '${summary.savingsRate.toStringAsFixed(1)}% savings',
+                height: MediaQuery.of(context).size.height * 0.18, // Responsive height
+        width: MediaQuery.of(context).size.width * 0.42,
               ),
               SummaryCard(
                 title: AppStrings.taxSavings,
@@ -217,6 +227,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 icon: Icons.trending_up,
                 color: AppColors.taxSavings,
                 subtitle: 'Optimized',
+                height: MediaQuery.of(context).size.height * 0.18, // Responsive height
+        width: MediaQuery.of(context).size.width * 0.42,
               ),
             ],
           ),
@@ -267,7 +279,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: AppStrings.scanReceipt,
                 color: AppColors.secondary,
                 onTap: () {
-                  // TODO: Navigate to receipt scanner
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ReceiptScannerScreen()));
                 },
               ),
               const SizedBox(width: 12),
@@ -276,7 +288,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: AppStrings.calculateTax,
                 color: AppColors.primary,
                 onTap: () {
-                  // TODO: Navigate to tax calculator
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => TaxCalculatorScreen()));
                 },
               ),
               const SizedBox(width: 12),
@@ -285,7 +298,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: AppStrings.generateReport,
                 color: AppColors.warning,
                 onTap: () {
-                  // TODO: Navigate to reports
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => GenerateReportScreen()));
                 },
               ),
             ],
@@ -307,9 +321,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         width: 100,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withAlpha(10),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withAlpha(30)),
         ),
         child: Column(
           children: [
@@ -511,11 +525,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildPlaceholder() {
-    return const Center(
-      child: Text('Feature coming soon...'),
-    );
+  Widget _buildContent() {
+  switch (_selectedIndex) {
+    case 0:
+      return _buildDashboard();
+    case 1:
+      return const TransactionsScreen();
+    case 2:
+      return const TaxCalculatorScreen();
+    case 3:
+      return const GenerateReportScreen();
+    default:
+      return const SizedBox();
   }
+}
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
